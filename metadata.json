@@ -1,0 +1,5 @@
+{
+  "name": "Mood & Stress Analyzer",
+  "description": "An experimental app that analyzes a photo to estimate stress and mood levels using AI.",
+  "requestFramePermissions": []
+}
