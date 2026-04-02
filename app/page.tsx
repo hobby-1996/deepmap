@@ -6,7 +6,13 @@ import { UploadCloud, AlertCircle, Loader2, Image as ImageIcon, Activity, Smile,
 import Image from 'next/image';
 
 // Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY || '' });
+const getAI = () => {
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured. Please add NEXT_PUBLIC_GEMINI_API_KEY to your environment variables.');
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 interface AnalysisResult {
   id?: string;
@@ -97,6 +103,7 @@ export default function Home() {
     setError(null);
 
     try {
+      const ai = getAI();
       // Convert file to base64
       const buffer = await imageFile.arrayBuffer();
       const base64Image = Buffer.from(buffer).toString('base64');
@@ -255,6 +262,20 @@ Analytical, calm, perceptive, and non-judgmental.`;
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {!process.env.NEXT_PUBLIC_GEMINI_API_KEY && (
+          <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold">API Key Missing</p>
+              <p className="text-sm">
+                The Gemini API key is not configured. If you are running this on Vercel, please add 
+                <code className="mx-1 px-1 bg-amber-100 rounded">NEXT_PUBLIC_GEMINI_API_KEY</code> 
+                to your environment variables in the Vercel dashboard.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl mb-4">
             Subconscious Psychological Mapping
